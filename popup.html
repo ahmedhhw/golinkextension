@@ -23,6 +23,8 @@
     </div>
     
     <div class="edit-button-group">
+      <button id="addBtn" class="add-btn">Add</button>
+      <button id="deleteBtn" class="delete-btn">Delete</button>
       <button id="editBtn" class="edit-btn">Edit</button>
     </div>
     
@@ -36,6 +38,34 @@
         class="go-links-editor"
         placeholder="google:https://google.com&#10;youtube:https://youtube.com"
       ></textarea>
+    </div>
+
+    <!-- Add new go link section (hidden by default) -->
+    <div class="add-section" id="addSection" style="display: none;">
+      <div class="form-row">
+        <label for="shortLinkInput">Short link</label>
+        <input type="text" id="shortLinkInput" placeholder="e.g., myshort" />
+      </div>
+      <div class="form-row">
+        <label for="urlInput">URL</label>
+        <input type="text" id="urlInput" placeholder="https://example.com" />
+      </div>
+      <div class="form-actions">
+        <button id="addSaveBtn" class="save-btn">Save</button>
+        <button id="addCancelBtn" class="edit-btn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Delete go links section (hidden by default) -->
+    <div class="delete-section" id="deleteSection" style="display: none;">
+      <div class="delete-header">
+        <label class="delete-label">Select links to delete</label>
+      </div>
+      <div class="delete-list" id="deleteList"></div>
+      <div class="form-actions">
+        <button id="deleteConfirmBtn" class="save-btn">Delete Selected</button>
+        <button id="deleteCancelBtn" class="edit-btn">Cancel</button>
+      </div>
     </div>
     
     <div id="info" class="info-box"></div>

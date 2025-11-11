@@ -15,6 +15,17 @@ const saveBtn = document.getElementById('saveBtn');
 const editBtn = document.getElementById('editBtn');
 const editorSection = document.getElementById('editorSection');
 const hintText = document.getElementById('hintText');
+const addBtn = document.getElementById('addBtn');
+const addSection = document.getElementById('addSection');
+const shortLinkInput = document.getElementById('shortLinkInput');
+const urlInput = document.getElementById('urlInput');
+const addSaveBtn = document.getElementById('addSaveBtn');
+const addCancelBtn = document.getElementById('addCancelBtn');
+const deleteBtn = document.getElementById('deleteBtn');
+const deleteSection = document.getElementById('deleteSection');
+const deleteList = document.getElementById('deleteList');
+const deleteConfirmBtn = document.getElementById('deleteConfirmBtn');
+const deleteCancelBtn = document.getElementById('deleteCancelBtn');
 
 // Load go links from Chrome storage on startup
 async function loadGoLinksFromStorage() {
@@ -141,6 +152,48 @@ editBtn.addEventListener('click', () => {
   toggleEditor();
 });
 
+// Toggle add section visibility
+function toggleAddSection(show = null) {
+  const isVisible = addSection.style.display !== 'none';
+  const shouldShow = show === null ? !isVisible : !!show;
+  if (shouldShow) {
+    addSection.style.display = 'block';
+    // Prefill the URL with the current active tab's URL
+    try {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs && tabs[0];
+        if (tab && tab.url) {
+          urlInput.value = tab.url;
+        } else {
+          urlInput.value = '';
+        }
+      });
+    } catch (err) {
+      // Fallback for environments where callback API isn't available
+      try {
+        (async () => {
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          urlInput.value = tab ? tab.url || '' : '';
+        })();
+      } catch (e) {
+        urlInput.value = '';
+      }
+    }
+    shortLinkInput.value = '';
+    shortLinkInput.focus();
+  } else {
+    addSection.style.display = 'none';
+  }
+}
+
+addBtn.addEventListener('click', () => {
+  toggleAddSection(true);
+});
+
+addCancelBtn.addEventListener('click', () => {
+  toggleAddSection(false);
+});
+
 // Save button click handler
 saveBtn.addEventListener('click', async () => {
   try {
@@ -153,6 +206,147 @@ saveBtn.addEventListener('click', async () => {
     showInfo(`Error: ${error.message}`);
   }
 });
+
+// Add Save handler - saves a single go link
+addSaveBtn.addEventListener('click', async () => {
+  const shortKey = (shortLinkInput.value || '').trim().toLowerCase();
+  let urlValue = (urlInput.value || '').trim();
+
+  if (!shortKey) {
+    showInfo('Please enter a short link name');
+    return;
+  }
+
+  if (!urlValue) {
+    showInfo('Please enter a URL');
+    return;
+  }
+
+  // Ensure URL is valid. If missing protocol, try to prepend https://
+  try {
+    new URL(urlValue);
+  } catch (e) {
+    // try adding https://
+    try {
+      urlValue = 'https://' + urlValue;
+      new URL(urlValue);
+    } catch (err) {
+      showInfo('Invalid URL');
+      return;
+    }
+  }
+
+  try {
+    // Merge into current goLinks and persist
+    const newLinks = { ...goLinks };
+    newLinks[shortKey] = urlValue;
+    await saveGoLinksToStorage(newLinks);
+    updateEditor();
+    showInfo(`Saved ${shortKey} → ${urlValue}`);
+    toggleAddSection(false);
+  } catch (error) {
+    console.error('Error saving new go link:', error);
+    showInfo('Error saving new go link');
+  }
+});
+
+// Allow Cmd/Ctrl+S to trigger Save when focus is in the add form inputs
+try {
+  // If inputs exist, attach keydown listeners
+  if (shortLinkInput && urlInput) {
+    [shortLinkInput, urlInput].forEach((el) => {
+      el.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === 's') {
+          e.preventDefault();
+          addSaveBtn.click();
+        }
+      });
+    });
+  }
+} catch (err) {
+  // Silently ignore in test environments if DOM elements are not present
+  console.warn('Could not attach Cmd/Ctrl+S handler for add form:', err);
+}
+
+// Toggle delete section visibility and render go links list
+function toggleDeleteSection(show = null) {
+  const isVisible = deleteSection.style.display !== 'none';
+  const shouldShow = show === null ? !isVisible : !!show;
+  
+  if (shouldShow) {
+    deleteSection.style.display = 'block';
+    renderDeleteList();
+  } else {
+    deleteSection.style.display = 'none';
+    deleteList.innerHTML = '';
+  }
+}
+
+// Render the list of go links with checkboxes in the delete section
+function renderDeleteList() {
+  deleteList.innerHTML = '';
+  const links = Object.entries(goLinks);
+  
+  if (links.length === 0) {
+    deleteList.innerHTML = '<p style="opacity: 0.7; text-align: center; margin: 10px 0; font-size: 12px;">No go links to delete</p>';
+    return;
+  }
+  
+  links.forEach(([key, url]) => {
+    const item = document.createElement('div');
+    item.className = 'delete-item';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = key;
+    checkbox.className = 'delete-checkbox';
+    
+    const label = document.createElement('label');
+    label.className = 'delete-item-label';
+    label.innerHTML = `<strong>${key}</strong><br><span class="delete-url">${url}</span>`;
+    
+    item.appendChild(checkbox);
+    item.appendChild(label);
+    deleteList.appendChild(item);
+  });
+}
+
+deleteBtn.addEventListener('click', () => {
+  toggleDeleteSection(true);
+});
+
+deleteCancelBtn.addEventListener('click', () => {
+  toggleDeleteSection(false);
+});
+
+deleteConfirmBtn.addEventListener('click', async () => {
+  const checkboxes = Array.from(document.querySelectorAll('.delete-checkbox'));
+  const selectedKeys = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
+  
+  if (selectedKeys.length === 0) {
+    showInfo('Please select at least one link to delete');
+    return;
+  }
+  
+  try {
+    // Create new links object without deleted keys
+    const newLinks = { ...goLinks };
+    selectedKeys.forEach(key => {
+      delete newLinks[key];
+    });
+    
+    await saveGoLinksToStorage(newLinks);
+    updateEditor();
+    showInfo(`Deleted ${selectedKeys.length} go link(s)`);
+    toggleDeleteSection(false);
+  } catch (error) {
+    console.error('Error deleting go links:', error);
+    showInfo('Error deleting go links');
+  }
+});
+
+// Initialize: Load go links from storage when popup opens
+loadGoLinksFromStorage();
 
 // Auto-save on Ctrl+S or Cmd+S
 goLinksEditor.addEventListener('keydown', async (e) => {

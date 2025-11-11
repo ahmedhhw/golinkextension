@@ -103,6 +103,7 @@ p {
 
 .edit-btn {
   padding: 10px 20px;
+  margin-left: 8px;
   background: #2a2a2a;
   border: 1px solid #404040;
   border-radius: 6px;
@@ -123,6 +124,146 @@ p {
 .edit-btn:active {
   transform: translateY(0);
 }
+
+.add-btn {
+  padding: 10px 20px;
+  margin-left: 8px;
+  background: #2a2a2a;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #e0e0e0;
+}
+
+.add-btn:hover {
+  background: #333;
+  border-color: #555;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.delete-btn {
+  padding: 10px 20px;
+  margin-left: 8px;
+  background: #2a2a2a;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #e0e0e0;
+}
+
+.delete-btn:hover {
+  background: #333;
+  border-color: #555;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.add-section {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  background: #151515;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.form-row label {
+  font-size: 12px;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+.form-row input {
+  padding: 8px 10px;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  background: #1e1e1e;
+  color: #e0e0e0;
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.delete-section {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  background: #151515;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.delete-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.delete-label {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.delete-list {
+  margin-bottom: 8px;
+}
+
+.delete-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px;
+  margin-bottom: 6px;
+  background: #1e1e1e;
+  border-radius: 6px;
+  border: 1px solid #2a2a2a;
+  transition: all 0.2s ease;
+}
+
+.delete-item:hover {
+  background: #252525;
+  border-color: #404040;
+}
+
+.delete-checkbox {
+  margin-top: 3px;
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: #666;
+}
+
+.delete-item-label {
+  font-size: 11px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.delete-url {
+  display: block;
+  opacity: 0.6;
+  word-break: break-all;
+  margin-top: 2px;
+}
+
 
 .editor-section {
   margin-bottom: 15px;
