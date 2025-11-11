@@ -9,6 +9,7 @@ A Chrome extension that allows you to quickly navigate to websites using short g
 - **Auto-focus**: Input field is automatically focused when the popup opens
 - **Chrome Storage**: Go links are automatically saved to Chrome's local storage and persist across sessions
 - **Keyboard Shortcuts**: Press Ctrl+S (or Cmd+S on Mac) to save your changes
+- **Dark Theme**: Modern dark color scheme for comfortable viewing
 
 ## Installation
 
@@ -61,7 +62,27 @@ The extension comes with these default go links:
 
 These are automatically saved to Chrome storage on first use. You can edit them directly in the text editor.
 
-## Project Structure
+## Development
+
+### Running Tests
+
+This project includes comprehensive unit tests. To run them:
+
+```bash
+# Install dependencies
+npm install
+
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Project Structure
 
 ```
 my-first-extension/
@@ -69,28 +90,21 @@ my-first-extension/
 ├── popup.html         # Popup UI
 ├── popup.css          # Popup styles
 ├── popup.js           # Popup functionality
+├── src/               # Source modules (testable code)
+│   ├── goLinks.js     # Go link parsing and formatting
+│   ├── storage.js     # Chrome storage operations
+│   └── navigation.js  # Navigation functionality
+├── tests/             # Unit tests
+│   ├── setup.js       # Test setup and mocks
+│   ├── goLinks.test.js
+│   ├── storage.test.js
+│   ├── navigation.test.js
+│   └── integration.test.js
 ├── go-links.json      # Example JSON file (for reference)
 ├── go-links.txt       # Example text file (for reference)
 ├── icons/             # Extension icons (create your own)
 └── README.md          # This file
 ```
-
-## Creating Icons
-
-You'll need to create icon files for the extension:
-- `icons/icon16.png` (16x16 pixels)
-- `icons/icon48.png` (48x48 pixels)
-- `icons/icon128.png` (128x128 pixels)
-
-You can use any image editor or online tool to create these icons. For now, you can use placeholder images or remove the icon references from `manifest.json` if you want to test without icons.
-
-## Development
-
-To modify the extension:
-1. Make your changes to the files
-2. Go to `chrome://extensions/`
-3. Click the refresh icon on your extension card
-4. Test your changes
 
 ## Permissions
 
@@ -129,7 +143,18 @@ github:https://github.com
 
 ### Edit Default Links
 
-You can edit the `defaultGoLinks` object in `popup.js` to change the default go links that are loaded on first use.
+You can edit the `defaultGoLinks` object in `src/goLinks.js` to change the default go links that are loaded on first use.
+
+## Testing
+
+The project includes comprehensive unit tests covering:
+- Go link parsing and formatting
+- Storage operations
+- Navigation functionality
+- Error handling
+- Integration scenarios
+
+All tests use Jest and include mocks for Chrome APIs.
 
 ## Next Steps
 
@@ -139,4 +164,3 @@ You can extend this extension by:
 - Creating a background service worker for additional functionality
 - Adding keyboard shortcuts for quick access
 - Implementing go link search/autocomplete
-
