@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Go Link Navigator",
+  "version": "1.0.0",
+  "description": "Navigate quickly using short go links",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Go Link Navigator",
+    "default_icon": {
+    
+    }
+  },
+  "icons": {
+   
+  }
+}
+

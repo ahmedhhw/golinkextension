@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go Link Navigator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Go Link Navigator</h1>
+    <p>Enter a short link and press Enter</p>
+    
+    <div class="input-group">
+      <input 
+        type="text" 
+        id="goLinkInput" 
+        class="go-link-input" 
+        placeholder="e.g., google, youtube"
+        autocomplete="off"
+        autofocus
+      />
+    </div>
+    
+    <div class="edit-button-group">
+      <button id="editBtn" class="edit-btn">Edit</button>
+    </div>
+    
+    <div class="editor-section" id="editorSection" style="display: none;">
+      <div class="editor-header">
+        <label for="goLinksEditor" class="editor-label">Edit Go Links</label>
+        <button id="saveBtn" class="save-btn">Save</button>
+      </div>
+      <textarea 
+        id="goLinksEditor" 
+        class="go-links-editor"
+        placeholder="google:https://google.com&#10;youtube:https://youtube.com"
+      ></textarea>
+    </div>
+    
+    <div id="info" class="info-box"></div>
+    
+    <div class="hint">
+      <p id="hintText">Try: <span class="hint-link">google</span>, <span class="hint-link">youtube</span></p>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
+
