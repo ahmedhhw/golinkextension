@@ -5,6 +5,7 @@ A Chrome extension that allows you to quickly navigate to websites using short g
 ## Features
 
 - **Quick Navigation**: Enter a short link (e.g., "google") and press Enter to navigate to the full URL
+- **Address Bar Integration**: Type "go" in the address bar, then your go link (e.g., "go google") to navigate instantly
 - **In-Place Text Editor**: Edit go links directly in the popup using a simple text format
 - **Auto-focus**: Input field is automatically focused when the popup opens
 - **Chrome Storage**: Go links are automatically saved to Chrome's local storage and persist across sessions
@@ -22,6 +23,15 @@ A Chrome extension that allows you to quickly navigate to websites using short g
 ## Usage
 
 ### Navigating with Go Links
+
+#### Method 1: Using the Address Bar (Recommended)
+
+1. Click in Chrome's address bar (omnibox)
+2. Type `go` followed by a space and your go link (e.g., `go google` or `go youtube`)
+3. Press Enter to navigate to the associated URL
+4. You'll see suggestions as you type matching go links
+
+#### Method 2: Using the Extension Popup
 
 1. Click the extension icon in your Chrome toolbar
 2. Type a go link (e.g., "google" or "youtube") in the input field
@@ -90,6 +100,7 @@ my-first-extension/
 ├── popup.html         # Popup UI
 ├── popup.css          # Popup styles
 ├── popup.js           # Popup functionality
+├── background.js      # Background service worker (omnibox handler)
 ├── src/               # Source modules (testable code)
 │   ├── goLinks.js     # Go link parsing and formatting
 │   ├── storage.js     # Chrome storage operations

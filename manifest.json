@@ -17,6 +17,12 @@
   },
   "icons": {
    
+  },
+  "omnibox": {
+    "keyword": "go"
+  },
+  "background": {
+    "service_worker": "background.js"
   }
 }
 

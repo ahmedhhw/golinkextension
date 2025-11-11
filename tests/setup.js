@@ -10,10 +10,19 @@ global.chrome = {
   },
   tabs: {
     query: jest.fn(),
-    update: jest.fn()
+    update: jest.fn(),
+    create: jest.fn()
   },
   windows: {
     getCurrent: jest.fn()
+  },
+  omnibox: {
+    onInputChanged: {
+      addListener: jest.fn()
+    },
+    onInputEntered: {
+      addListener: jest.fn()
+    }
   }
 };
 
