@@ -26,16 +26,44 @@ chrome.omnibox.onInputChanged.addListener(async (text, suggest) => {
   const goLinks = await loadGoLinksFromStorage();
   const trimmedText = text.trim().toLowerCase();
   
-  // Filter go links that match the input
-  const matches = Object.keys(goLinks)
-    .filter(key => key.startsWith(trimmedText))
-    .slice(0, 5) // Limit to 5 suggestions
-    .map(key => ({
+  try {
+    // If input is empty, show top links
+    const keys = Object.keys(goLinks || {});
+    let matched = [];
+
+    if (!trimmedText) {
+      matched = keys.slice(0, 5);
+    } else {
+      // Prioritize startsWith matches, then includes matches
+      const starts = keys.filter(key => key.startsWith(trimmedText));
+      const includes = keys.filter(key => !key.startsWith(trimmedText) && key.includes(trimmedText));
+      matched = starts.concat(includes).slice(0, 5);
+    }
+
+    const suggestions = matched.map(key => ({
       content: key,
       description: `${key} → ${goLinks[key]}`
     }));
-  
-  suggest(matches);
+
+    // If we have at least one suggestion, set a default suggestion so Chrome may show inline hinting
+    if (suggestions.length > 0) {
+      const first = suggestions[0];
+      try {
+        chrome.omnibox.setDefaultSuggestion({ description: `Autocomplete: ${first.description}` });
+      } catch (err) {
+        // setDefaultSuggestion may throw in some environments; ignore safely
+        console.warn('setDefaultSuggestion failed:', err);
+      }
+    } else {
+      // Clear default suggestion when none
+      try { chrome.omnibox.setDefaultSuggestion({ description: '' }); } catch (e) {}
+    }
+
+    suggest(suggestions);
+  } catch (err) {
+    console.error('Error while preparing omnibox suggestions:', err);
+    suggest([]);
+  }
 });
 
 // Handle when user selects a suggestion or presses Enter

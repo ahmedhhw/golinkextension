@@ -17,6 +17,8 @@ const mockChrome = {
     onInputEntered: {
       addListener: jest.fn()
     }
+    ,
+    setDefaultSuggestion: jest.fn()
   }
 };
 
@@ -78,6 +80,23 @@ describe('Background Service Worker (Omnibox)', () => {
       const suggestions = suggest.mock.calls[0][0];
       expect(suggestions.length).toBeGreaterThan(0);
       expect(suggestions.every(s => s.content.startsWith('g'))).toBe(true);
+    });
+
+    test('should include keys that contain the input (not only prefix)', async () => {
+      const goLinks = {
+        github: 'https://github.com',
+        google: 'https://google.com',
+        jira: 'https://jira.com'
+      };
+
+      mockChrome.storage.local.get.mockResolvedValue({ goLinks });
+
+      const suggest = jest.fn();
+      await onInputChangedCallback('hub', suggest);
+
+      const suggestions = suggest.mock.calls[0][0];
+      // 'github' should be suggested even though 'hub' is not a prefix
+      expect(suggestions.some(s => s.content === 'github')).toBe(true);
     });
 
     test('should limit suggestions to 5 items', async () => {
@@ -148,6 +167,39 @@ describe('Background Service Worker (Omnibox)', () => {
 
       const suggestions = suggest.mock.calls[0][0];
       expect(suggestions.length).toBe(0);
+    });
+
+    test('should call setDefaultSuggestion when suggestions available', async () => {
+      const goLinks = {
+        google: 'https://google.com',
+        github: 'https://github.com'
+      };
+
+      mockChrome.storage.local.get.mockResolvedValue({ goLinks });
+
+      const suggest = jest.fn();
+      await onInputChangedCallback('g', suggest);
+
+      expect(mockChrome.omnibox.setDefaultSuggestion).toHaveBeenCalled();
+      const arg = mockChrome.omnibox.setDefaultSuggestion.mock.calls[0][0];
+      expect(arg).toHaveProperty('description');
+      expect(arg.description).toContain('Autocomplete:');
+    });
+
+    test('should clear default suggestion when no suggestions', async () => {
+      const goLinks = {
+        youtube: 'https://youtube.com'
+      };
+
+      mockChrome.storage.local.get.mockResolvedValue({ goLinks });
+
+      const suggest = jest.fn();
+      await onInputChangedCallback('xyz', suggest);
+
+      expect(mockChrome.omnibox.setDefaultSuggestion).toHaveBeenCalled();
+      const arg = mockChrome.omnibox.setDefaultSuggestion.mock.calls[0][0];
+      expect(arg).toHaveProperty('description');
+      expect(arg.description).toBe('');
     });
 
     test('should use default go links when storage is empty', async () => {
